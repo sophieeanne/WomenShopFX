@@ -4,8 +4,12 @@ public class Accessories extends Product {
     //No additional attribute
 
     //Constructor
-    public Accessories(String name, double purchasePrice, double sellPrice) {
-        super(name, purchasePrice, sellPrice);
+    public Accessories(int number,String name, double purchasePrice, double sellPrice) {
+        super(number,name, purchasePrice, sellPrice);
+    }
+    //Constructor 2
+    public Accessories(int number,String name, double purchasePrice, double sellPrice, double discountPrice,int nbItems) {
+        super(number,name, purchasePrice, sellPrice, discountPrice, nbItems);
     }
 
     //Method

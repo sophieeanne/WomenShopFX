@@ -5,8 +5,8 @@ public class Clothes extends Product {
     private int size;
 
     //Constructor
-    public Clothes(String name, double purchasePrice, double sellPrice,int number, int size) {
-        super(name, purchasePrice, sellPrice);
+    public Clothes(int number,String name, double purchasePrice, double sellPrice, int size) {
+        super(number,name, purchasePrice, sellPrice);
         try {
             setSize(size);
         } catch (IllegalArgumentException e) {
@@ -14,6 +14,17 @@ public class Clothes extends Product {
             this.size = 34; //Valeur défaut
         }
     }
+
+    public Clothes(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems, int size) {
+        super(number,name, purchasePrice, sellPrice, discountPrice,nbItems );
+        try {
+            setSize(size);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            this.size = 34; //Valeur défaut
+        }
+    }
+
 
     //Getter et setter
     public int getSize() { return this.size; }

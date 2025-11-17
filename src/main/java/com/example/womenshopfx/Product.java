@@ -9,15 +9,15 @@ public abstract class Product implements Discount, Comparable<Product>{
     private double discountPrice=0;
     private int nbItems=0;
 
-    private static int counter = 0; //pour l auto incrementation
+    //private static int counter = 0; //pour l auto incrementation
     private static double capital=1000.0;
     private static double income = 0;
     private static double cost = 0;
 
     //Constructor ----------------------------------------------
-    public Product(String name, double purchasePrice, double sellPrice) {
-        counter++;
-        this.number = counter;
+    public Product(int number,String name, double purchasePrice, double sellPrice) {
+        //counter++;
+        this.number = number;
         this.name = name;
 
         if (purchasePrice < 0 || sellPrice < 0) {
@@ -26,6 +26,22 @@ public abstract class Product implements Discount, Comparable<Product>{
 
         this.purchasePrice = purchasePrice;
         this.sellPrice = sellPrice;
+    }
+
+    //Constructor 2----------------------------------------------
+    public Product(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems) {
+        //counter++;
+        this.number = number;
+        this.name = name;
+
+        if (purchasePrice < 0 || sellPrice < 0) {
+            throw new IllegalArgumentException("Negative price!");
+        }
+
+        this.purchasePrice = purchasePrice;
+        this.sellPrice = sellPrice;
+        this.discountPrice = discountPrice;
+        this.nbItems = nbItems;
     }
 
 

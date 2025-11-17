@@ -6,8 +6,19 @@ public class Shoes extends Product {
     private int shoeSize;
 
     //Constructor
-    public Shoes(String name, double purchasePrice, double sellPrice, int shoeSize) {
-        super(name, purchasePrice, sellPrice);
+    public Shoes(int number,String name, double purchasePrice, double sellPrice, int shoeSize) {
+        super(number,name, purchasePrice, sellPrice);
+        try {
+            setShoeSize(shoeSize);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            this.shoeSize = 36; //valeur par défaut
+        }
+    }
+
+    //Constructor 2
+    public Shoes(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems, int shoeSize) {
+        super(number,name, purchasePrice, sellPrice, discountPrice, nbItems);
         try {
             setShoeSize(shoeSize);
         } catch (IllegalArgumentException e) {

@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class ProductController implements Initializable {
@@ -108,8 +109,8 @@ public class ProductController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
         loadSampleData();
-        //setupCategoryButtons();
-        //updateStatistics();
+        setupCategoryFilter();
+        setupSortComboBox();
     }
 
     private void setupTableColumns() {
@@ -141,7 +142,7 @@ public class ProductController implements Initializable {
                 if (empty || price == null) {
                     setText(null);
                 } else {
-                    setText(String.format("$%.2f", price));
+                    setText(String.format("%.2f €", price));
                 }
             }
         });
@@ -153,7 +154,7 @@ public class ProductController implements Initializable {
                 if (empty || price == null) {
                     setText(null);
                 } else {
-                    setText(String.format("$%.2f", price));
+                    setText(String.format("%.2f €", price));
                 }
             }
         });
@@ -165,7 +166,7 @@ public class ProductController implements Initializable {
                 if (empty || price == null) {
                     setText(null);
                 } else {
-                    setText(String.format("$%.2f", price));
+                    setText(String.format("%.2f €", price));
                 }
             }
         });
@@ -217,6 +218,76 @@ public class ProductController implements Initializable {
         prodTable.setItems(allProducts);
     }
 
+    private void setupCategoryFilter() {
+        // Fill the Combox with all of the categories
+        catComboBox.getItems().addAll("All", "Clothes", "Shoes", "Accessories");
+        catComboBox.setValue("All");
+        catComboBox.setOnAction(e -> filterByCategory());
+    }
 
+    private void filterByCategory() {
+        String selectedCategory = catComboBox.getValue();
+
+        if(selectedCategory==null || "All".equals(selectedCategory)) {
+            prodTable.setItems(allProducts);
+        }
+        else {
+            ObservableList<Product> filteredProducts = allProducts.filtered(product -> {
+                switch (selectedCategory) {
+                    case "Clothes":
+                        return product instanceof Clothes;
+                    case "Shoes":
+                        return product instanceof Shoes;
+                    case "Accessories":
+                        return product instanceof Accessories;
+                    default:
+                        return true;
+                }
+            });
+            prodTable.setItems(filteredProducts);
+        }
+    }
+
+    private void setupSortComboBox(){
+        // Fill the ComboBox with sort options
+        sortComboBox.getItems().addAll(
+                "Price (Ascending)",
+                "Price (Descending)",
+                "Name (A-Z)",
+                "Name (Z-A)",
+                "Stock (Ascending)",
+                "Stock (Descending)"
+        );
+        sortComboBox.setValue("Price (Ascending)"); // Default value
+        sortComboBox.setOnAction(e -> applySorting());
+    }
+
+    private void applySorting(){
+        String sortOption = sortComboBox.getValue();
+        if(sortOption==null) return;
+        ObservableList<Product> currentItems = prodTable.getItems();
+
+        switch(sortOption){
+            case "Price (Ascending)":
+                currentItems.sort(Comparator.comparing(Product::getSellPrice));
+                break;
+                case "Price (Descending)":
+                    currentItems.sort(Comparator.comparing(Product::getSellPrice).reversed());
+                    break;
+            case "Name (A-Z)":
+                currentItems.sort(Comparator.comparing(Product::getName));
+                break;
+                case "Name (Z-A)":
+                    currentItems.sort(Comparator.comparing(Product::getName).reversed());
+                    break;
+            case "Stock (Ascending)":
+                currentItems.sort(Comparator.comparing(Product::getNbItems));
+                break;
+            case "Stock (Descending)":
+                currentItems.sort(Comparator.comparing(Product::getNbItems).reversed());
+                break;
+        }
+        prodTable.setItems(currentItems);
+    }
 
 }

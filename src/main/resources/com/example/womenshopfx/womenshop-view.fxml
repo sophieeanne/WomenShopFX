@@ -9,43 +9,55 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="558.0" prefWidth="679.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.womenshopfx.ProductController">
+<AnchorPane fx:id="nameLabel" prefHeight="636.0" prefWidth="872.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.womenshopfx.ProductController">
     <children>
-        <Label fx:id="womenShopLabel" layoutX="28.0" layoutY="14.0" text="Women Shop">
+        <Label fx:id="womenShopLabel" layoutX="25.0" layoutY="30.0" text="Welcome to the Women Shop">
             <font>
-                <Font size="19.0" />
+                <Font size="34.0" />
             </font>
         </Label>
-        <Button fx:id="allProdBtn" layoutX="25.0" layoutY="62.0" mnemonicParsing="false" text="All products" />
-        <Button fx:id="clothesBtn" layoutX="192.0" layoutY="62.0" mnemonicParsing="false" text="Clothes" />
-        <Button fx:id="shoesBtn" layoutX="339.0" layoutY="62.0" mnemonicParsing="false" text="Shoes" />
-        <Button fx:id="accessBtn" layoutX="524.0" layoutY="62.0" mnemonicParsing="false" text="Accessories" />
-        <Button fx:id="addProdbtn" layoutX="559.0" layoutY="213.0" mnemonicParsing="false" text="Add product" />
-        <TextField fx:id="searchTxtField" layoutX="28.0" layoutY="127.0" text="Search products..." />
-        <ComboBox fx:id="catComboBox" layoutX="264.0" layoutY="127.0" prefWidth="150.0" promptText="All categories" />
-        <ComboBox fx:id="sortComboBox" layoutX="493.0" layoutY="127.0" prefWidth="150.0" promptText="Sort by" />
-        <Button fx:id="sellBtn" layoutX="28.0" layoutY="432.0" mnemonicParsing="false" text="Sell" />
-        <Button fx:id="purBtn" layoutX="152.0" layoutY="432.0" mnemonicParsing="false" text="Purchase" />
-        <Button fx:id="applyBtn" layoutX="300.0" layoutY="432.0" mnemonicParsing="false" text="Apply discount" />
-        <Button fx:id="remBtn" layoutX="451.0" layoutY="432.0" mnemonicParsing="false" text="Remove discount" />
-        <Label fx:id="incomeLabel" layoutX="28.0" layoutY="493.0" text="Income: " />
-        <Label fx:id="costLabel" layoutX="128.0" layoutY="494.0" text="Cost: " />
-        <Label fx:id="stockLabel" layoutX="230.0" layoutY="494.0" text="Available stock:" />
-        <Label fx:id="capitalLabel" layoutX="392.0" layoutY="19.0" text="Capital:" />
-        <TableView fx:id="prodTable" layoutX="25.0" layoutY="196.0" prefHeight="200.0" prefWidth="518.0">
+        <Button fx:id="addProdbtn" layoutX="616.0" layoutY="91.0" mnemonicParsing="false" onAction="#handleAddProduct" text="Add product" />
+        <ComboBox fx:id="catComboBox" layoutX="28.0" layoutY="91.0" prefWidth="150.0" promptText="All categories" />
+        <ComboBox fx:id="sortComboBox" layoutX="383.0" layoutY="91.0" prefWidth="150.0" promptText="Sort by" />
+        <Button fx:id="sellBtn" layoutX="28.0" layoutY="486.0" mnemonicParsing="false" text="Sell" />
+        <Button fx:id="purBtn" layoutX="146.0" layoutY="486.0" mnemonicParsing="false" text="Purchase" />
+        <Button fx:id="applyBtn" layoutX="306.0" layoutY="486.0" mnemonicParsing="false" text="Apply discount" />
+        <Button fx:id="remBtn" layoutX="480.0" layoutY="486.0" mnemonicParsing="false" text="Remove discount" />
+        <Label fx:id="incomeLabel" layoutX="319.0" layoutY="565.0" text="Income: " />
+        <Label fx:id="costLabel" layoutX="584.0" layoutY="565.0" text="Cost: " />
+        <Label fx:id="capitalLabel" layoutX="26.0" layoutY="565.0" text="Capital:" />
+        <TableView fx:id="prodTable" layoutX="17.0" layoutY="140.0" prefHeight="324.0" prefWidth="585.0">
             <columns>
                 <TableColumn fx:id="idCol" prefWidth="59.20001220703125" text="ID" />
                 <TableColumn fx:id="nameCol" prefWidth="78.4000244140625" text="Name" />
                 <TableColumn fx:id="catCol" prefWidth="77.5999755859375" text="Category" />
-                <TableColumn fx:id="purCol" prefWidth="86.4000244140625" text="Pur. Price" />
-                <TableColumn fx:id="sellCol" prefWidth="75.0" text="Sell Price" />
-                <TableColumn fx:id="discCol" prefWidth="75.0" text="Disc. Price" />
-                <TableColumn fx:id="stockCol" prefWidth="75.0" text="Stock" />
+                <TableColumn fx:id="sizeCol" prefWidth="67.20005798339844" text="Size" />
+                <TableColumn fx:id="purCol" prefWidth="82.4000244140625" text="Pur. Price" />
+                <TableColumn fx:id="sellCol" prefWidth="75.20001220703125" text="Sell Price" />
+                <TableColumn fx:id="discCol" prefWidth="79.20001220703125" text="Disc. Price" />
+                <TableColumn fx:id="stockCol" prefWidth="60.0" text="Stock" />
             </columns>
         </TableView>
 
         <!--Row action-->
-        <Button fx:id="deleteBtn" layoutX="576.0" layoutY="264.0" mnemonicParsing="false" text="Delete" />
-        <Button fx:id="editBtn" layoutX="576.0" layoutY="317.0" mnemonicParsing="false" text="Edit" />
+        <Button fx:id="deleteBtn" layoutX="727.0" layoutY="91.0" mnemonicParsing="false" onAction="#handleDeleteProduct" text="Delete" />
+        <Button fx:id="editBtn" layoutX="802.0" layoutY="91.0" mnemonicParsing="false" onAction="#handleEditProduct" text="Edit" />
+      <TextField fx:id="nameTextField" layoutX="696.0" layoutY="140.0" />
+      <TextField fx:id="catTextField" layoutX="696.0" layoutY="183.0" />
+      <TextField fx:id="purPriceTextField" layoutX="696.0" layoutY="267.0" />
+      <TextField fx:id="sellPriceTextField" layoutX="696.0" layoutY="314.0" />
+      <Label layoutX="646.0" layoutY="144.0" text="Name" />
+      <Label fx:id="catLabel" layoutX="634.0" layoutY="187.0" text="Category" />
+      <Label fx:id="purpriceLabel" layoutX="610.0" layoutY="271.0" text="Purchase price" />
+      <Label fx:id="sellPriceLabel" layoutX="637.0" layoutY="318.0" text="Sell price" />
+      <TextField fx:id="discPriceTextField" layoutX="696.0" layoutY="359.0" />
+      <TextField fx:id="stockTextField" layoutX="696.0" layoutY="398.0" />
+      <Label fx:id="discPriceLabel" layoutX="612.0" layoutY="363.0" text="Discount price" />
+      <Label fx:id="stockLabel" layoutX="658.0" layoutY="402.0" text="Stock" />
+      <TextField fx:id="capitalTextField" layoutX="88.0" layoutY="561.0" />
+      <TextField fx:id="incomeTextField" layoutX="384.0" layoutY="561.0" />
+      <TextField fx:id="costTextField" layoutX="652.0" layoutY="561.0" />
+      <TextField fx:id="sizeTextField" layoutX="696.0" layoutY="227.0" />
+      <Label fx:id="sizeLabel" layoutX="662.0" layoutY="231.0" text="Size" />
     </children>
 </AnchorPane>

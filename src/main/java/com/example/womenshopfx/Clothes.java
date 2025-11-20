@@ -5,7 +5,7 @@ public class Clothes extends Product {
     private int size;
 
     //Constructor
-    public Clothes(String name, double purchasePrice, double sellPrice,int number, int size) {
+    public Clothes(String name, double purchasePrice, double sellPrice, int size) {
         super(name, purchasePrice, sellPrice);
         try {
             setSize(size);

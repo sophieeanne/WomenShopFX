@@ -34,22 +34,36 @@ public class ProductController implements Initializable {
     private Label capitalLabel;
 
     @FXML
+    private TextField capitalTextField;
+
+    @FXML
     private TableColumn<Product, String> catCol;
 
     @FXML
     private ComboBox<String> catComboBox;
 
     @FXML
-    private Button clothesBtn;
+    private Label catLabel;
+
+    @FXML
+    private TextField catTextField;
 
     @FXML
     private Label costLabel;
+
+    @FXML
+    private TextField costTextField;
 
     @FXML
     private Button deleteBtn;
 
     @FXML
     private TableColumn<Product, Double> discCol;
+
+    @FXML
+    private Label discPriceLabel;
+    @FXML
+    private TextField discPriceTextField;
 
     @FXML
     private Button editBtn;
@@ -61,7 +75,14 @@ public class ProductController implements Initializable {
     private Label incomeLabel;
 
     @FXML
+    private TextField incomeTextField;
+
+    @FXML
     private TableColumn<Product, String> nameCol;
+
+
+    @FXML
+    private TextField nameTextField;
 
     @FXML
     private TableView<Product> prodTable;
@@ -73,10 +94,12 @@ public class ProductController implements Initializable {
     private TableColumn<Product, Double> purCol;
 
     @FXML
-    private Button remBtn;
+    private Label purPriceLabel;
+    @FXML
+    private TextField purPriceTextField;
 
     @FXML
-    private TextField searchTxtField;
+    private Button remBtn;
 
     @FXML
     private Button sellBtn;
@@ -88,16 +111,29 @@ public class ProductController implements Initializable {
     private Button shoesBtn;
 
     @FXML
+    private Label sellPriceLabel;
+    @FXML
+    private TextField sellPriceTextField;
+
+    @FXML
     private ComboBox<String> sortComboBox;
 
     @FXML
     private TableColumn<Product, Integer> stockCol;
+    @FXML
+    private TableColumn<Product, Integer> sizeCol;
 
     @FXML
     private Label stockLabel;
 
     @FXML
+    private TextField stockTextField;
+
+    @FXML
     private Label womenShopLabel;
+
+    @FXML
+    private TextField sizeTextField;
 
     // Sample data lists
     private ObservableList<Product> allProducts = FXCollections.observableArrayList();
@@ -111,6 +147,65 @@ public class ProductController implements Initializable {
         loadSampleData();
         setupCategoryFilter();
         setupSortComboBox();
+        applyFilterAndSort();
+        handleAddProduct();
+        setupActionButtons();
+        setupTableSelectionListener();
+    }
+    private void setupTableSelectionListener() {
+        // Listen for table selection changes
+        prodTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        // Auto-fill the text fields with selected product data
+                        fillInputFieldsWithProduct(newValue);
+                    } else {
+                        // Clear fields when no product is selected
+                        clearInputFields();
+                    }
+                }
+        );
+    }
+
+    private void fillInputFieldsWithProduct(Product product) {
+        try {
+            nameTextField.setText(product.getName());
+            catTextField.setText(getCategoryName(product));
+            purPriceTextField.setText(String.format("%.2f", product.getPurchasePrice()));
+            sellPriceTextField.setText(String.format("%.2f", product.getSellPrice()));
+            discPriceTextField.setText(String.format("%.2f", product.getDiscountPrice()));
+            stockTextField.setText(String.valueOf(product.getNbItems()));
+
+            if (product instanceof Clothes) {
+                Clothes clothes = (Clothes) product;
+                sizeTextField.setText(String.valueOf(clothes.getSize()));
+            } else if (product instanceof Shoes) {
+                Shoes shoes = (Shoes) product;
+                sizeTextField.setText(String.valueOf(shoes.getShoeSize()));
+            }
+
+        } catch (Exception e) {
+            showError("Error loading product data: " + e.getMessage());
+        }
+    }
+    private void setupActionButtons() {
+        // Configure button actions
+        addProdbtn.setOnAction(e -> handleAddProduct());
+        editBtn.setOnAction(e -> handleEditProduct());
+        deleteBtn.setOnAction(e -> handleDeleteProduct());
+
+        // Disable edit/delete until a product is selected
+        editBtn.setDisable(true);
+        deleteBtn.setDisable(true);
+
+        // Listen for table selection changes
+        prodTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    boolean productSelected = newValue != null;
+                    editBtn.setDisable(!productSelected);
+                    deleteBtn.setDisable(!productSelected);
+                }
+        );
     }
 
     private void setupTableColumns() {
@@ -121,7 +216,16 @@ public class ProductController implements Initializable {
         sellCol.setCellValueFactory(new PropertyValueFactory<>("sellPrice"));
         discCol.setCellValueFactory(new PropertyValueFactory<>("discountPrice"));
         stockCol.setCellValueFactory(new PropertyValueFactory<>("nbItems"));
-
+        sizeCol.setCellValueFactory(cellData -> {
+            Product product = cellData.getValue();
+            if (product instanceof Clothes) {
+                return new javafx.beans.property.SimpleIntegerProperty(((Clothes) product).getSize()).asObject();
+            } else if (product instanceof Shoes) {
+                return new javafx.beans.property.SimpleIntegerProperty(((Shoes) product).getShoeSize()).asObject();
+            } else {
+                return null;
+            }
+        });
         // Custom category column - detects the actual type of product
         catCol.setCellValueFactory(cellData -> {Product product = cellData.getValue();
             if (product instanceof Clothes) {
@@ -181,11 +285,11 @@ public class ProductController implements Initializable {
         accessoriesProducts.clear();
 
         // Create sample Clothes
-        Clothes dress = new Clothes("Summer Dress", 25.0, 50.0, 1, 38);
+        Clothes dress = new Clothes("Summer Dress", 25.0, 50.0, 38);
         dress.setNbItems(10);
-        Clothes shirt = new Clothes("Cotton Shirt", 15.0, 35.0, 2, 40);
+        Clothes shirt = new Clothes("Cotton Shirt", 15.0, 35.0, 40);
         shirt.setNbItems(15);
-        Clothes jeans = new Clothes("Blue Jeans", 20.0, 45.0, 3, 42);
+        Clothes jeans = new Clothes("Blue Jeans", 20.0, 45.0,  42);
         jeans.setNbItems(8);
 
         // Create sample Shoes
@@ -222,30 +326,7 @@ public class ProductController implements Initializable {
         // Fill the Combox with all of the categories
         catComboBox.getItems().addAll("All", "Clothes", "Shoes", "Accessories");
         catComboBox.setValue("All");
-        catComboBox.setOnAction(e -> filterByCategory());
-    }
-
-    private void filterByCategory() {
-        String selectedCategory = catComboBox.getValue();
-
-        if(selectedCategory==null || "All".equals(selectedCategory)) {
-            prodTable.setItems(allProducts);
-        }
-        else {
-            ObservableList<Product> filteredProducts = allProducts.filtered(product -> {
-                switch (selectedCategory) {
-                    case "Clothes":
-                        return product instanceof Clothes;
-                    case "Shoes":
-                        return product instanceof Shoes;
-                    case "Accessories":
-                        return product instanceof Accessories;
-                    default:
-                        return true;
-                }
-            });
-            prodTable.setItems(filteredProducts);
-        }
+        catComboBox.setOnAction(e -> applyFilterAndSort());
     }
 
     private void setupSortComboBox(){
@@ -259,35 +340,252 @@ public class ProductController implements Initializable {
                 "Stock (Descending)"
         );
         sortComboBox.setValue("Price (Ascending)"); // Default value
-        sortComboBox.setOnAction(e -> applySorting());
+        sortComboBox.setOnAction(e -> applyFilterAndSort());
     }
 
-    private void applySorting(){
+    private void applyFilterAndSort() {
+        String selectedCategory = catComboBox.getValue();
         String sortOption = sortComboBox.getValue();
-        if(sortOption==null) return;
-        ObservableList<Product> currentItems = prodTable.getItems();
 
-        switch(sortOption){
-            case "Price (Ascending)":
-                currentItems.sort(Comparator.comparing(Product::getSellPrice));
-                break;
+        ObservableList<Product> filteredProducts = FXCollections.observableArrayList();
+        filteredProducts.addAll(allProducts.filtered(product -> {
+            if (selectedCategory == null || "All".equals(selectedCategory)) {
+                return true;
+            }
+            switch (selectedCategory) {
+                case "Clothes": return product instanceof Clothes;
+                case "Shoes": return product instanceof Shoes;
+                case "Accessories": return product instanceof Accessories;
+                default: return true;
+            }
+        }));
+
+        if (sortOption != null) {
+            switch(sortOption){
+                case "Price (Ascending)":
+                    filteredProducts.sort(Comparator.comparing(Product::getSellPrice));
+                    break;
                 case "Price (Descending)":
-                    currentItems.sort(Comparator.comparing(Product::getSellPrice).reversed());
+                    filteredProducts.sort(Comparator.comparing(Product::getSellPrice).reversed());
                     break;
-            case "Name (A-Z)":
-                currentItems.sort(Comparator.comparing(Product::getName));
-                break;
+                case "Name (A-Z)":
+                    filteredProducts.sort(Comparator.comparing(Product::getName));
+                    break;
                 case "Name (Z-A)":
-                    currentItems.sort(Comparator.comparing(Product::getName).reversed());
+                    filteredProducts.sort(Comparator.comparing(Product::getName).reversed());
                     break;
-            case "Stock (Ascending)":
-                currentItems.sort(Comparator.comparing(Product::getNbItems));
-                break;
-            case "Stock (Descending)":
-                currentItems.sort(Comparator.comparing(Product::getNbItems).reversed());
-                break;
+                case "Stock (Ascending)":
+                    filteredProducts.sort(Comparator.comparing(Product::getNbItems));
+                    break;
+                case "Stock (Descending)":
+                    filteredProducts.sort(Comparator.comparing(Product::getNbItems).reversed());
+                    break;
+            }
         }
-        prodTable.setItems(currentItems);
+        prodTable.setItems(filteredProducts);
     }
+
+    // Add this class variable
+    private Product currentEditingProduct;
+
+    @FXML
+    private void handleAddProduct() {
+        try {
+            // If we're in edit mode, update the existing product
+            if (currentEditingProduct != null) {
+                handleUpdateProduct();
+                return;
+            }
+
+            // Get values from TextFields
+            String name = nameTextField.getText();
+            String category = catTextField.getText();
+            double purchasePrice = Double.parseDouble(purPriceTextField.getText());
+            double sellPrice = Double.parseDouble(sellPriceTextField.getText());
+            double discountPrice = Double.parseDouble(discPriceTextField.getText());
+            int stock = Integer.parseInt(stockTextField.getText());
+
+            // Validate data
+            if (name.isEmpty()) {
+                showError("Name cannot be empty");
+                return;
+            }
+
+            if (purchasePrice < 0 || sellPrice < 0 || stock < 0) {
+                showError("Prices and stock cannot be negative");
+                return;
+            }
+
+            // Create product based on category
+            Product newProduct;
+            switch (category.toLowerCase()) {
+                case "clothes":
+                    newProduct = new Clothes(name, purchasePrice, sellPrice, 38); // Default size
+                    break;
+                case "shoes":
+                    newProduct = new Shoes(name, purchasePrice, sellPrice, 40); // Default shoe size
+                    break;
+                case "accessories":
+                    newProduct = new Accessories(name, purchasePrice, sellPrice);
+                    break;
+                default:
+                    showError("Invalid category. Use: Clothes, Shoes or Accessories");
+                    return;
+            }
+
+            // Set additional properties
+            newProduct.setDiscountPrice(discountPrice);
+            newProduct.setNbItems(stock);
+
+            // Add to the list
+            allProducts.add(newProduct);
+
+            // Reapply filters and sorting
+            applyFilterAndSort();
+
+            // Clear input fields
+            clearInputFields();
+
+            showSuccess("Product added successfully!");
+
+        } catch (NumberFormatException e) {
+            showError("Please enter valid numbers for prices and stock");
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditProduct() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct == null) {
+            showError("Please select a product to edit");
+            return;
+        }
+
+        try {
+            // Fill fields with selected product data
+            nameTextField.setText(selectedProduct.getName());
+            catTextField.setText(getCategoryName(selectedProduct));
+            purPriceTextField.setText(String.valueOf(selectedProduct.getPurchasePrice()));
+            sellPriceTextField.setText(String.valueOf(selectedProduct.getSellPrice()));
+            discPriceTextField.setText(String.valueOf(selectedProduct.getDiscountPrice()));
+            stockTextField.setText(String.valueOf(selectedProduct.getNbItems()));
+
+            // Store the product being edited
+            currentEditingProduct = selectedProduct;
+
+            // Change button text to indicate edit mode
+            addProdbtn.setText("Update Product");
+
+        } catch (Exception e) {
+            showError("Error loading data: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleUpdateProduct() {
+        if (currentEditingProduct == null) {
+            showError("No product being edited");
+            return;
+        }
+
+        try {
+            // Update the product
+            currentEditingProduct.setName(nameTextField.getText());
+            currentEditingProduct.setPurchasePrice(Double.parseDouble(purPriceTextField.getText()));
+            currentEditingProduct.setSellPrice(Double.parseDouble(sellPriceTextField.getText()));
+            currentEditingProduct.setDiscountPrice(Double.parseDouble(discPriceTextField.getText()));
+            currentEditingProduct.setNbItems(Integer.parseInt(stockTextField.getText()));
+
+            // Refresh the table
+            prodTable.refresh();
+
+            // Clear fields and reset
+            clearInputFields();
+            currentEditingProduct = null;
+            addProdbtn.setText("Add Product"); // Reset button text
+
+            showSuccess("Product updated successfully!");
+
+        } catch (NumberFormatException e) {
+            showError("Please enter valid numbers for prices and stock");
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleDeleteProduct() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct == null) {
+            showError("Please select a product to delete");
+            return;
+        }
+
+        // Confirmation (you can implement a proper dialog later)
+        if (showConfirmation("Are you sure you want to delete " + selectedProduct.getName() + "?")) {
+            // Remove from all lists
+            allProducts.remove(selectedProduct);
+            clothesProducts.remove(selectedProduct);
+            shoesProducts.remove(selectedProduct);
+            accessoriesProducts.remove(selectedProduct);
+
+            // Reapply filters
+            applyFilterAndSort();
+
+            // Clear input fields if we were editing this product
+            if (currentEditingProduct == selectedProduct) {
+                clearInputFields();
+                currentEditingProduct = null;
+                addProdbtn.setText("Add Product");
+            }
+
+            showSuccess("Product deleted successfully!");
+        }
+    }
+
+    private String getCategoryName(Product product) {
+        if (product instanceof Clothes) return "Clothes";
+        if (product instanceof Shoes) return "Shoes";
+        if (product instanceof Accessories) return "Accessories";
+        return "Unknown";
+    }
+
+    private void clearInputFields() {
+        nameTextField.clear();
+        catTextField.clear();
+        purPriceTextField.clear();
+        sellPriceTextField.clear();
+        discPriceTextField.clear();
+        stockTextField.clear();
+    }
+
+    private void showError(String message) {
+        // You can use Alert dialog or display in a Label
+        System.err.println("ERROR: " + message);
+        // Example with Alert:
+        // Alert alert = new Alert(Alert.AlertType.ERROR);
+        // alert.setContentText(message);
+        // alert.show();
+    }
+
+    private void showSuccess(String message) {
+        System.out.println("SUCCESS: " + message);
+    }
+
+    private boolean showConfirmation(String message) {
+        // Implement a proper confirmation dialog later
+        System.out.println("CONFIRMATION: " + message);
+        return true; // For now, always return true
+    }
+
+
+
+
+
+
 
 }

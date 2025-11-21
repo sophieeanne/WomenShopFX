@@ -160,7 +160,7 @@ public class ProductController implements Initializable {
         setupActionButtons();
         setupTableSelectionListener();
         displayStatistics();
-        handleSellProduct();
+
     }
     private void setupTableSelectionListener() {
         // Listen for table selection changes
@@ -592,7 +592,6 @@ public class ProductController implements Initializable {
                 showError("Please select a valid number for sell");
                 return;
             }
-            selectedProduct.setNbItems(nbItemBase - nbItemsToSell);
 
             // Calcul new income
             selectedProduct.sell(nbItemsToSell);
@@ -600,12 +599,9 @@ public class ProductController implements Initializable {
             // Refresh the table
             prodTable.refresh();
 
-            // Clear fields and reset
+            // Clear field
             sellTextField.clear();
             clearInputFields();
-            currentEditingProduct = null;
-            //addProdbtn.setText("Add Product"); // Reset button text
-
             showSuccess("Product sold successfully!");
 
             displayStatistics();
@@ -631,7 +627,6 @@ public class ProductController implements Initializable {
                 showError("Please select a valid number for purchase");
                 return;
             }
-            selectedProduct.setNbItems(nbItemBase + nbItemsToPurchase);
 
             // Calcul new cost and capital
             selectedProduct.purchase(nbItemsToPurchase);
@@ -642,9 +637,6 @@ public class ProductController implements Initializable {
             // Clear fields and reset
             purchaseTextField.clear();
             clearInputFields();
-            currentEditingProduct = null;
-            //addProdbtn.setText("Add Product"); // Reset button text
-
             showSuccess("Product purchased successfully!");
 
             displayStatistics();

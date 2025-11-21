@@ -208,8 +208,10 @@ public class ProductController implements Initializable {
         deleteBtn.setOnAction(e -> handleDeleteProduct());
         sellBtn.setOnAction(e -> handleSellProduct());
         purBtn.setOnAction(e -> handlePurchaseProduct());
+        applyBtn.setOnAction(e -> handleApplyDiscount());
+        remBtn.setOnAction(e -> handleStopDiscount());
 
-        // Disable edit/delete until a product is selected
+        // Disable edit/delete/sell/purchase until a product is selected
         sellBtn.setDisable(true);
         purBtn.setDisable(true);
         editBtn.setDisable(true);
@@ -223,6 +225,8 @@ public class ProductController implements Initializable {
                     deleteBtn.setDisable(!productSelected);
                     sellBtn.setDisable(!productSelected);
                     purBtn.setDisable(!productSelected);
+                    applyBtn.setDisable(!productSelected);
+                    remBtn.setDisable(!productSelected);
                 }
         );
     }
@@ -648,6 +652,49 @@ public class ProductController implements Initializable {
         } catch (NumberFormatException e) {
             showError("Please enter valid number to purchase");
         }
+    }
+
+
+    private void handleApplyDiscount() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+            // Verifications
+            if (selectedProduct.getDiscountPrice() != 0) {
+                showError("A discount is already applied");
+                return;
+            }
+            if (selectedProduct == null) {
+                showError("Please select a product");
+                return;
+            }
+
+            //Apply discount
+            selectedProduct.applyDiscount();
+
+            // Refresh the table
+            prodTable.refresh();
+            showSuccess("Discount applied successfully!");
+    }
+
+    private void handleStopDiscount() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+        // Verifications
+        if (selectedProduct.getDiscountPrice() == 0) {
+            showError("No discount applied to this product");
+            return;
+        }
+        if (selectedProduct == null) {
+            showError("Please select a product");
+            return;
+        }
+
+        //Stop discount
+        selectedProduct.unApplyDiscount();
+
+        // Refresh the table
+        prodTable.refresh();
+        showSuccess("Discount removed successfully!");
     }
 
     private String getCategoryName(Product product) {

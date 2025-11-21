@@ -207,9 +207,11 @@ public class ProductController implements Initializable {
         editBtn.setOnAction(e -> handleEditProduct());
         deleteBtn.setOnAction(e -> handleDeleteProduct());
         sellBtn.setOnAction(e -> handleSellProduct());
+        purBtn.setOnAction(e -> handlePurchaseProduct());
 
         // Disable edit/delete until a product is selected
         sellBtn.setDisable(true);
+        purBtn.setDisable(true);
         editBtn.setDisable(true);
         deleteBtn.setDisable(true);
 
@@ -220,6 +222,7 @@ public class ProductController implements Initializable {
                     editBtn.setDisable(!productSelected);
                     deleteBtn.setDisable(!productSelected);
                     sellBtn.setDisable(!productSelected);
+                    purBtn.setDisable(!productSelected);
                 }
         );
     }
@@ -592,12 +595,44 @@ public class ProductController implements Initializable {
             currentEditingProduct = null;
             //addProdbtn.setText("Add Product"); // Reset button text
 
-            showSuccess("Product selled successfully!");
+            showSuccess("Product sold successfully!");
 
             displayStatistics();
 
         } catch (NumberFormatException e) {
             showError("Please enter valid number to sell");
+        }
+    }
+
+    private void handlePurchaseProduct() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct == null) {
+            showError("Please select a product to purchase");
+            return;
+        }
+
+        try {
+            // Update stock
+            int nbItemBase = selectedProduct.getNbItems();
+            int nbItemsToPurchase = Integer.parseInt(purchaseTextField.getText());
+            selectedProduct.setNbItems(nbItemBase + nbItemsToPurchase);
+
+            // Refresh the table
+            prodTable.refresh();
+
+            // Clear fields and reset
+            purchaseTextField.clear();
+            clearInputFields();
+            currentEditingProduct = null;
+            //addProdbtn.setText("Add Product"); // Reset button text
+
+            showSuccess("Product purchased successfully!");
+
+            displayStatistics();
+
+        } catch (NumberFormatException e) {
+            showError("Please enter valid number to purchase");
         }
     }
 

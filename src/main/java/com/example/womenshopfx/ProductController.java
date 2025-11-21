@@ -584,6 +584,10 @@ public class ProductController implements Initializable {
             // Update stock
             int nbItemBase = selectedProduct.getNbItems();
             int nbItemsToSell = Integer.parseInt(sellTextField.getText());
+            if (nbItemsToSell > nbItemBase ||  nbItemsToSell < 1) {
+                showError("Please select a valid number for sell");
+                return;
+            }
             selectedProduct.setNbItems(nbItemBase - nbItemsToSell);
 
             // Refresh the table
@@ -616,6 +620,10 @@ public class ProductController implements Initializable {
             // Update stock
             int nbItemBase = selectedProduct.getNbItems();
             int nbItemsToPurchase = Integer.parseInt(purchaseTextField.getText());
+            if (nbItemsToPurchase < 1) {
+                showError("Please select a valid number for purchase");
+                return;
+            }
             selectedProduct.setNbItems(nbItemBase + nbItemsToPurchase);
 
             // Refresh the table

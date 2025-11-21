@@ -121,7 +121,7 @@ public class ProductController implements Initializable {
     @FXML
     private TableColumn<Product, Integer> stockCol;
     @FXML
-    private TableColumn<Product, Integer> sizeCol;
+    private TableColumn<Product, Object> sizeCol;
 
     @FXML
     private Label stockLabel;
@@ -141,6 +141,8 @@ public class ProductController implements Initializable {
     private ObservableList<Shoes> shoesProducts = FXCollections.observableArrayList();
     private ObservableList<Accessories> accessoriesProducts = FXCollections.observableArrayList();
 
+    private Product currentEditingProduct;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
@@ -151,6 +153,7 @@ public class ProductController implements Initializable {
         handleAddProduct();
         setupActionButtons();
         setupTableSelectionListener();
+        displayStatistics();
     }
     private void setupTableSelectionListener() {
         // Listen for table selection changes
@@ -182,6 +185,9 @@ public class ProductController implements Initializable {
             } else if (product instanceof Shoes) {
                 Shoes shoes = (Shoes) product;
                 sizeTextField.setText(String.valueOf(shoes.getShoeSize()));
+            }
+            else{
+                sizeTextField.setText("");
             }
 
         } catch (Exception e) {
@@ -216,14 +222,15 @@ public class ProductController implements Initializable {
         sellCol.setCellValueFactory(new PropertyValueFactory<>("sellPrice"));
         discCol.setCellValueFactory(new PropertyValueFactory<>("discountPrice"));
         stockCol.setCellValueFactory(new PropertyValueFactory<>("nbItems"));
+
         sizeCol.setCellValueFactory(cellData -> {
             Product product = cellData.getValue();
             if (product instanceof Clothes) {
-                return new javafx.beans.property.SimpleIntegerProperty(((Clothes) product).getSize()).asObject();
+                return new javafx.beans.property.SimpleObjectProperty<>(((Clothes) product).getSize());
             } else if (product instanceof Shoes) {
-                return new javafx.beans.property.SimpleIntegerProperty(((Shoes) product).getShoeSize()).asObject();
+                return new javafx.beans.property.SimpleObjectProperty(((Shoes) product).getShoeSize());
             } else {
-                return null;
+                return new javafx.beans.property.SimpleObjectProperty<>("N/A");
             }
         });
         // Custom category column - detects the actual type of product
@@ -385,8 +392,6 @@ public class ProductController implements Initializable {
         prodTable.setItems(filteredProducts);
     }
 
-    // Add this class variable
-    private Product currentEditingProduct;
 
     @FXML
     private void handleAddProduct() {
@@ -446,6 +451,8 @@ public class ProductController implements Initializable {
             // Clear input fields
             clearInputFields();
 
+            displayStatistics();
+
             showSuccess("Product added successfully!");
 
         } catch (NumberFormatException e) {
@@ -479,6 +486,8 @@ public class ProductController implements Initializable {
             // Change button text to indicate edit mode
             addProdbtn.setText("Update Product");
 
+            displayStatistics();
+
         } catch (Exception e) {
             showError("Error loading data: " + e.getMessage());
         }
@@ -508,6 +517,8 @@ public class ProductController implements Initializable {
             addProdbtn.setText("Add Product"); // Reset button text
 
             showSuccess("Product updated successfully!");
+
+            displayStatistics();
 
         } catch (NumberFormatException e) {
             showError("Please enter valid numbers for prices and stock");
@@ -542,6 +553,7 @@ public class ProductController implements Initializable {
                 currentEditingProduct = null;
                 addProdbtn.setText("Add Product");
             }
+            displayStatistics();
 
             showSuccess("Product deleted successfully!");
         }
@@ -581,6 +593,17 @@ public class ProductController implements Initializable {
         System.out.println("CONFIRMATION: " + message);
         return true; // For now, always return true
     }
+
+    private void displayStatistics(){
+        double capital = Product.getCapital();
+        double income = Product.getIncome();
+        double cost = Product.getCost();
+
+        capitalTextField.setText(String.format(" €%.2f", capital));
+        incomeTextField.setText(String.format(" €%.2f", income));
+        costTextField.setText(String.format(" €%.2f", cost));
+    }
+
 
 
 

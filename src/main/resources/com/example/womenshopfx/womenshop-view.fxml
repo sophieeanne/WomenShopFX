@@ -54,9 +54,9 @@
       <TextField fx:id="stockTextField" layoutX="696.0" layoutY="398.0" />
       <Label fx:id="discPriceLabel" layoutX="612.0" layoutY="363.0" text="Discount price" />
       <Label fx:id="stockLabel" layoutX="658.0" layoutY="402.0" text="Stock" />
-      <TextField fx:id="capitalTextField" layoutX="88.0" layoutY="561.0" />
-      <TextField fx:id="incomeTextField" layoutX="384.0" layoutY="561.0" />
-      <TextField fx:id="costTextField" layoutX="652.0" layoutY="561.0" />
+      <TextField fx:id="capitalTextField" layoutX="88.0" layoutY="561.0" prefHeight="26.0" prefWidth="126.0" />
+      <TextField fx:id="incomeTextField" layoutX="384.0" layoutY="561.0" prefHeight="26.0" prefWidth="126.0" />
+      <TextField fx:id="costTextField" layoutX="652.0" layoutY="561.0" prefHeight="26.0" prefWidth="126.0" />
       <TextField fx:id="sizeTextField" layoutX="696.0" layoutY="227.0" />
       <Label fx:id="sizeLabel" layoutX="662.0" layoutY="231.0" text="Size" />
     </children>

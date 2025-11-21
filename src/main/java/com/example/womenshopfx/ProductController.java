@@ -590,6 +590,9 @@ public class ProductController implements Initializable {
             }
             selectedProduct.setNbItems(nbItemBase - nbItemsToSell);
 
+            // Calcul new income
+            selectedProduct.sell(nbItemsToSell);
+
             // Refresh the table
             prodTable.refresh();
 
@@ -625,6 +628,9 @@ public class ProductController implements Initializable {
                 return;
             }
             selectedProduct.setNbItems(nbItemBase + nbItemsToPurchase);
+
+            // Calcul new cost and capital
+            selectedProduct.purchase(nbItemsToPurchase);
 
             // Refresh the table
             prodTable.refresh();

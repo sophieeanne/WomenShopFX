@@ -135,6 +135,12 @@ public class ProductController implements Initializable {
     @FXML
     private TextField sizeTextField;
 
+    @FXML
+    private TextField sellTextField;
+
+    @FXML
+    private TextField purchaseTextField;
+
     // Sample data lists
     private ObservableList<Product> allProducts = FXCollections.observableArrayList();
     private ObservableList<Clothes> clothesProducts = FXCollections.observableArrayList();
@@ -154,6 +160,7 @@ public class ProductController implements Initializable {
         setupActionButtons();
         setupTableSelectionListener();
         displayStatistics();
+        handleSellProduct();
     }
     private void setupTableSelectionListener() {
         // Listen for table selection changes
@@ -199,8 +206,10 @@ public class ProductController implements Initializable {
         addProdbtn.setOnAction(e -> handleAddProduct());
         editBtn.setOnAction(e -> handleEditProduct());
         deleteBtn.setOnAction(e -> handleDeleteProduct());
+        sellBtn.setOnAction(e -> handleSellProduct());
 
         // Disable edit/delete until a product is selected
+        sellBtn.setDisable(true);
         editBtn.setDisable(true);
         deleteBtn.setDisable(true);
 
@@ -210,6 +219,7 @@ public class ProductController implements Initializable {
                     boolean productSelected = newValue != null;
                     editBtn.setDisable(!productSelected);
                     deleteBtn.setDisable(!productSelected);
+                    sellBtn.setDisable(!productSelected);
                 }
         );
     }
@@ -556,6 +566,38 @@ public class ProductController implements Initializable {
             displayStatistics();
 
             showSuccess("Product deleted successfully!");
+        }
+    }
+
+    private void handleSellProduct() {
+        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProduct == null) {
+            showError("Please select a product to sell");
+            return;
+        }
+
+        try {
+            // Update stock
+            int nbItemBase = selectedProduct.getNbItems();
+            int nbItemsToSell = Integer.parseInt(sellTextField.getText());
+            selectedProduct.setNbItems(nbItemBase - nbItemsToSell);
+
+            // Refresh the table
+            prodTable.refresh();
+
+            // Clear fields and reset
+            sellTextField.clear();
+            clearInputFields();
+            currentEditingProduct = null;
+            //addProdbtn.setText("Add Product"); // Reset button text
+
+            showSuccess("Product selled successfully!");
+
+            displayStatistics();
+
+        } catch (NumberFormatException e) {
+            showError("Please enter valid number to sell");
         }
     }
 

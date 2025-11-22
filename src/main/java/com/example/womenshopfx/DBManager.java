@@ -287,4 +287,32 @@ public class DBManager {
         }
     }
 
+    public void deleteProduct(int productId) {
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        ResultSet myRs = null;
+
+        try {
+            myConn = this.Connector();
+
+            // insertion in Product
+            String sql = "DELETE FROM Product WHERE number = ?";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setInt(1, productId);
+            int affectedRows = myStmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.err.println("No product deleted, ID not found in the database : " + productId);
+            } else {
+                System.out.println("Product deleted successfully in the database : " + productId);
+            }
+
+        } catch (Exception e) {
+            System.err.println("ERROR (deleteProduct): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            close(myConn, myStmt, myRs);
+        }
+    }
+
 }

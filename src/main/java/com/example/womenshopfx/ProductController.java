@@ -597,7 +597,10 @@ public class ProductController implements Initializable {
 
         // Confirmation (you can implement a proper dialog later)
         if (showConfirmation("Are you sure you want to delete " + selectedProduct.getName() + "?")) {
-            // Remove from all lists
+            // Remove in the database
+            manager.deleteProduct(selectedProduct.getNumber());
+
+            // Remove from all local lists
             allProducts.remove(selectedProduct);
             clothesProducts.remove(selectedProduct);
             shoesProducts.remove(selectedProduct);

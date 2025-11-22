@@ -4,9 +4,18 @@ public class Clothes extends Product {
     //Atributes
     private int size;
 
-    //Constructor
+    //Constructors
     public Clothes(String name, double purchasePrice, double sellPrice, int size) {
         super(name, purchasePrice, sellPrice);
+        try {
+            setSize(size);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            this.size = 34; //Valeur défaut
+        }
+    }
+    public Clothes(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems, int size) {
+        super(number,name, purchasePrice, sellPrice, discountPrice,nbItems );
         try {
             setSize(size);
         } catch (IllegalArgumentException e) {

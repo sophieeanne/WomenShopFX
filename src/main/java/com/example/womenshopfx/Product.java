@@ -27,6 +27,21 @@ public abstract class Product implements Discount, Comparable<Product>{
         this.purchasePrice = purchasePrice;
         this.sellPrice = sellPrice;
     }
+    //Constructor 2----------------------------------------------
+    public Product(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems) {
+        //counter++;
+        this.number = number;
+        this.name = name;
+
+        if (purchasePrice < 0 || sellPrice < 0) {
+            throw new IllegalArgumentException("Negative price!");
+        }
+
+        this.purchasePrice = purchasePrice;
+        this.sellPrice = sellPrice;
+        this.discountPrice = discountPrice;
+        this.nbItems = nbItems;
+    }
 
 
     //Getters ----------------------------------------------

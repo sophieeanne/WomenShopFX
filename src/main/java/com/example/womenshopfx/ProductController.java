@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ProductController implements Initializable {
@@ -141,6 +142,8 @@ public class ProductController implements Initializable {
     @FXML
     private TextField purchaseTextField;
 
+    DBManager manager;
+
     // Sample data lists
     private ObservableList<Product> allProducts = FXCollections.observableArrayList();
     private ObservableList<Clothes> clothesProducts = FXCollections.observableArrayList();
@@ -152,11 +155,13 @@ public class ProductController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
-        loadSampleData();
+        //loadSampleData();
+        manager = new DBManager();
+        fetchProduct();
         setupCategoryFilter();
         setupSortComboBox();
         applyFilterAndSort();
-        handleAddProduct();
+        //handleAddProduct();
         setupActionButtons();
         setupTableSelectionListener();
         displayStatistics();
@@ -346,6 +351,37 @@ public class ProductController implements Initializable {
         prodTable.setItems(allProducts);
     }
 
+    //Function to fetch products of the DB
+    public void fetchProduct() {
+        // Clear existing data
+        allProducts.clear();
+        clothesProducts.clear();
+        shoesProducts.clear();
+        accessoriesProducts.clear();
+
+        List<Clothes> listClothes = manager.loadClothes();
+        List<Shoes> listShoes = manager.loadShoes();
+        List<Accessories> listAccessories = manager.loadAccessories();
+
+        if (clothesProducts!=null) {
+            clothesProducts.addAll(listClothes);
+        }
+        if (shoesProducts!=null) {
+            shoesProducts.addAll(listShoes);
+        }
+        if (accessoriesProducts!=null) {
+            accessoriesProducts.addAll(listAccessories);
+        }
+
+        // Add all to the main list
+        allProducts.addAll(clothesProducts);
+        allProducts.addAll(shoesProducts);
+        allProducts.addAll(accessoriesProducts);
+
+        // Display all products by default
+        prodTable.setItems(allProducts);
+    }
+
     private void setupCategoryFilter() {
         // Fill the Combox with all of the categories
         catComboBox.getItems().addAll("All", "Clothes", "Shoes", "Accessories");
@@ -410,6 +446,7 @@ public class ProductController implements Initializable {
     }
 
 
+
     @FXML
     private void handleAddProduct() {
         try {
@@ -456,11 +493,16 @@ public class ProductController implements Initializable {
             }
 
             // Set additional properties
-            newProduct.setDiscountPrice(discountPrice);
-            newProduct.setNbItems(stock);
+            //newProduct.setDiscountPrice(discountPrice);
+            //newProduct.setNbItems(stock);
 
             // Add to the list
-            allProducts.add(newProduct);
+            //allProducts.add(newProduct);
+
+            //Add in the database
+            manager.addProduct(newProduct);
+            //Update table
+            fetchProduct();
 
             // Reapply filters and sorting
             applyFilterAndSort();

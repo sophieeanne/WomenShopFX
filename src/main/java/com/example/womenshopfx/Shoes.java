@@ -15,6 +15,15 @@ public class Shoes extends Product {
             this.shoeSize = 36; //valeur par défaut
         }
     }
+    public Shoes(int number,String name, double purchasePrice, double sellPrice, double discountPrice, int nbItems, int shoeSize) {
+        super(number,name, purchasePrice, sellPrice, discountPrice, nbItems);
+        try {
+            setShoeSize(shoeSize);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            this.shoeSize = 36; //valeur par défaut
+        }
+    }
 
     //Getter and Setter
     public int getShoeSize() {

@@ -4,12 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
@@ -450,19 +445,24 @@ public class ProductController implements Initializable {
     @FXML
     private void handleAddProduct() {
         try {
+
             // If we're in edit mode, update the existing product
             if (currentEditingProduct != null) {
                 handleUpdateProduct();
                 return;
             }
+            prodTable.getSelectionModel().clearSelection();
+
+            discPriceTextField.setText("0.0");
+            stockTextField.setText("0");
 
             // Get values from TextFields
             String name = nameTextField.getText();
             String category = catTextField.getText();
             double purchasePrice = Double.parseDouble(purPriceTextField.getText());
             double sellPrice = Double.parseDouble(sellPriceTextField.getText());
-            double discountPrice = Double.parseDouble(discPriceTextField.getText());
-            int stock = Integer.parseInt(stockTextField.getText());
+            double discountPrice = 0.0;
+            int stock = 0;
 
             // Validate data
             if (name.isEmpty()) {
@@ -472,6 +472,15 @@ public class ProductController implements Initializable {
 
             if (purchasePrice < 0 || sellPrice < 0 || stock < 0) {
                 showError("Prices and stock cannot be negative");
+                return;
+            }
+
+            if(stock!=0){
+                showError("Stock should be equal to 0");
+                return;
+            }
+            if(discountPrice!=0){
+                showError("Discount prices should be equal to 0");
                 return;
             }
 
@@ -594,9 +603,12 @@ public class ProductController implements Initializable {
             showError("Please select a product to delete");
             return;
         }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Product");
+        alert.setHeaderText("Are you sure you want to delete this product ?");
 
-        // Confirmation (you can implement a proper dialog later)
-        if (showConfirmation("Are you sure you want to delete " + selectedProduct.getName() + "?")) {
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+        if (result == ButtonType.OK) {
             // Remove in the database
             manager.deleteProduct(selectedProduct.getNumber());
 
@@ -743,6 +755,7 @@ public class ProductController implements Initializable {
 
     private void clearInputFields() {
         nameTextField.clear();
+        sizeTextField.clear();
         catTextField.clear();
         purPriceTextField.clear();
         sellPriceTextField.clear();

@@ -160,7 +160,16 @@ public class ProductController implements Initializable {
         setupActionButtons();
         setupTableSelectionListener();
         displayStatistics();
+        setEditableFalse();
+    }
 
+    private void setEditableFalse() {
+        discPriceTextField.setEditable(false);
+        stockTextField.setEditable(false);
+
+        incomeTextField.setEditable(false);
+        capitalTextField.setEditable(false);
+        costTextField.setEditable(false);
     }
     private void setupTableSelectionListener() {
         // Listen for table selection changes

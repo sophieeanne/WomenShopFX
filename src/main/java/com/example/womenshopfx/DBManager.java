@@ -276,6 +276,30 @@ public class DBManager {
         }
     }
 
+    public void updateDiscount(Product p) {
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        try {
+            myConn = this.Connector();
+
+            // Update main Product table
+            String sql = "UPDATE Product SET discountPrice=? WHERE number=?";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setDouble(1, p.getDiscountPrice());
+            myStmt.setInt(2, p.getNumber());
+            myStmt.executeUpdate();
+            myStmt.close();
+
+            System.out.println("Discount updated in database successfully!");
+
+        } catch (Exception e) {
+            System.err.println("ERROR (updateDiscount): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            close(myConn, myStmt, null);
+        }
+    }
+
 
 
 

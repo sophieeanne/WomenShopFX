@@ -664,7 +664,13 @@ public class ProductController implements Initializable {
             }
 
             // Calcul new income
-            selectedProduct.sell(nbItemsToSell);
+            if (selectedProduct.getDiscountPrice()==0) {
+                selectedProduct.sell(nbItemsToSell);
+            }
+            else {
+                selectedProduct.sellWithDiscount(nbItemsToSell);
+            }
+
 
             // Refresh the table
             prodTable.refresh();
@@ -716,47 +722,49 @@ public class ProductController implements Initializable {
         }
     }
 
-
+//Le update va marcher ? pas sure
     private void handleApplyDiscount() {
-        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+        boolean anyApplied = false;
 
-            // Verifications
-            if (selectedProduct.getDiscountPrice() != 0) {
-                showError("A discount is already applied");
-                return;
+        for (Product p : allProducts) {
+
+            if (p.getDiscountPrice() == 0) {
+                p.applyDiscount();
+                manager.updateDiscount(p); // update of the DB
+                anyApplied = true;
             }
-            if (selectedProduct == null) {
-                showError("Please select a product");
-                return;
-            }
+        }
 
-            //Apply discount
-            selectedProduct.applyDiscount();
+        if (!anyApplied) {
+            showError("Discount already applied to all products");
+            return;
+        }
 
-            // Refresh the table
-            prodTable.refresh();
-            showSuccess("Discount applied successfully!");
+        prodTable.refresh();
+        showSuccess("Discount applied to ALL products!");
     }
 
+
+
     private void handleStopDiscount() {
-        Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
+        boolean anyStopped = false;
 
-        // Verifications
-        if (selectedProduct.getDiscountPrice() == 0) {
-            showError("No discount applied to this product");
+        for (Product p : allProducts) {
+
+            if (p.getDiscountPrice() != 0) {  // discount actif
+                p.unApplyDiscount();
+                manager.updateDiscount(p); // update DB
+                anyStopped = true;
+            }
+        }
+
+        if (!anyStopped) {
+            showError("No product currently has a discount");
             return;
         }
-        if (selectedProduct == null) {
-            showError("Please select a product");
-            return;
-        }
 
-        //Stop discount
-        selectedProduct.unApplyDiscount();
-
-        // Refresh the table
         prodTable.refresh();
-        showSuccess("Discount removed successfully!");
+        showSuccess("Discount removed from ALL products!");
     }
 
     private String getCategoryName(Product product) {

@@ -98,6 +98,19 @@ public abstract class Product implements Discount, Comparable<Product>{
         }
     }
 
+    public void sellWithDiscount(int nbItems) {
+        try {
+            if (nbItems <= 0) throw new IllegalArgumentException("Negative number of items!");
+            if (nbItems > this.nbItems) throw new IllegalArgumentException("Product Unavailable");
+            this.nbItems -= nbItems;
+            income += nbItems * this.discountPrice;
+            capital += nbItems * this.discountPrice;
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void purchase(int nbItems) {
         try {
             if (nbItems <= 0) throw new IllegalArgumentException("Negative number of items!");

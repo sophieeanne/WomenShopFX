@@ -133,92 +133,6 @@ public class DBManager {
         }
     }
 
-//    public void addProduct(Product product){
-//        Connection myConn=null;
-//        PreparedStatement myStmt = null;
-//        ResultSet myRs= null;
-//        try {
-//            myConn = this.Connector();
-//            String sql = "INSERT INTO Product (name, purchasePrice, sellPrice) VALUES (?, ?, ?)";;
-//            myStmt = myConn.prepareStatement(sql);
-//            myStmt.setString(1, student.getName());
-//            myStmt.setString(2, student.getGender());
-//            myStmt.execute();
-//            System.out.println("test1");
-//        }
-//        catch(Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//        finally{
-//            close(myConn,myStmt,myRs);
-//        }
-//    }
-
-
-//    public void addProduct(Product p) {
-//
-//        Connection myConn=null;
-//        PreparedStatement myStmt = null;
-//        ResultSet myRs= null;
-//
-//        try {
-//            myConn = this.Connector();
-//            String sql = "INSERT INTO Product (name, purchasePrice, sellPrice) VALUES (?, ?, ?)";
-//            myStmt = myConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-//            myStmt.setString(1, p.getName());
-//            myStmt.setDouble(2, p.getPurchasePrice());
-//            myStmt.setDouble(3, p.getSellPrice());
-//            myStmt.execute();
-//            System.out.println("Insertion OK dans Product");
-//
-//            //retrieve the generated product ID
-//            myRs = myStmt.getGeneratedKeys();
-//            if (myRs.next()) {
-//                int generatedId = myRs.getInt(1);
-//                p.setNumber(generatedId); // si tu veux stocker l'ID dans l'objet Java
-//            }
-//            myRs.close();
-//            myStmt.close();
-//            int productId = p.getNumber();
-//            System.out.println(productId);
-//
-//            // Insert into specific table
-//            if (p instanceof Clothes) {
-//                Clothes c = (Clothes) p;
-//                String sql1 = "INSERT INTO Clothes (product_id, size) VALUES (?, ?)";
-//                try (PreparedStatement st = myConn.prepareStatement(sql1)) {
-//                    st.setInt(1, productId);
-//                    st.setInt(2, c.getSize());
-//                    st.executeUpdate();
-//                }
-//
-//            } else if (p instanceof Shoes) {
-//                Shoes s = (Shoes) p;
-//                String sql2 = "INSERT INTO Shoes (product_id, shoeSize) VALUES (?, ?)";
-//                try (PreparedStatement st = myConn.prepareStatement(sql2)) {
-//                    st.setInt(1, productId);
-//                    st.setInt(2, s.getShoeSize());
-//                    st.executeUpdate();
-//                }
-//
-//            } else if (p instanceof Accessories) {
-//                String sql3 = "INSERT INTO Accessories (product_id) VALUES (?)";
-//                try (PreparedStatement st = myConn.prepareStatement(sql3)) {
-//                    st.setInt(1, productId);
-//                    st.executeUpdate();
-//
-//                }
-//            }
-//
-//            System.out.println("SUCCESS: Product added to database.");
-//
-//        } catch (Exception e) {
-//            System.err.println("ERROR (addProduct): " + e.getMessage());
-//            e.printStackTrace();
-//        } finally{
-//            close(myConn,myStmt,myRs);
-//        }
-//    }
 
     public void addProduct(Product p) {
         Connection myConn = null;
@@ -314,5 +228,55 @@ public class DBManager {
             close(myConn, myStmt, myRs);
         }
     }
+
+
+    public void updateProduct(Product p) {
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+
+        try {
+            myConn = this.Connector();
+
+            // Update main Product table
+            String sql = "UPDATE Product SET name=?, purchasePrice=?, sellPrice=? WHERE number=?";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setString(1, p.getName());
+            myStmt.setDouble(2, p.getPurchasePrice());
+            myStmt.setDouble(3, p.getSellPrice());
+            myStmt.setInt(4, p.getNumber());
+            myStmt.executeUpdate();
+            myStmt.close();
+
+            // Update specific table if needed
+            if (p instanceof Clothes) {
+                Clothes c = (Clothes) p;
+                String sqlClothes = "UPDATE Clothes SET size=? WHERE product_id=?";
+                try (PreparedStatement st = myConn.prepareStatement(sqlClothes)) {
+                    st.setInt(1, c.getSize());
+                    st.setInt(2, p.getNumber());
+                    st.executeUpdate();
+                }
+            } else if (p instanceof Shoes) {
+                Shoes s = (Shoes) p;
+                String sqlShoes = "UPDATE Shoes SET shoeSize=? WHERE product_id=?";
+                try (PreparedStatement st = myConn.prepareStatement(sqlShoes)) {
+                    st.setInt(1, s.getShoeSize());
+                    st.setInt(2, p.getNumber());
+                    st.executeUpdate();
+                }
+            }
+
+            System.out.println("Product updated in database successfully!");
+
+        } catch (Exception e) {
+            System.err.println("ERROR (updateProduct): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            close(myConn, myStmt, null);
+        }
+    }
+
+
+
 
 }

@@ -573,11 +573,24 @@ public class ProductController implements Initializable {
             currentEditingProduct.setName(nameTextField.getText());
             currentEditingProduct.setPurchasePrice(Double.parseDouble(purPriceTextField.getText()));
             currentEditingProduct.setSellPrice(Double.parseDouble(sellPriceTextField.getText()));
-            currentEditingProduct.setDiscountPrice(Double.parseDouble(discPriceTextField.getText()));
-            currentEditingProduct.setNbItems(Integer.parseInt(stockTextField.getText()));
+            //Update specfic attribute size
+            if (currentEditingProduct instanceof Clothes) {
+                Clothes c = (Clothes) currentEditingProduct;
+                c.setSize(Integer.parseInt(sizeTextField.getText()));
+            }
+            else if (currentEditingProduct instanceof Shoes) {
+                Shoes s = (Shoes) currentEditingProduct;
+                s.setShoeSize(Integer.parseInt(sizeTextField.getText()));
+            }
+            else if (currentEditingProduct instanceof Accessories) {
+                // nothing
+            }
 
             // Refresh the table
             prodTable.refresh();
+
+            //Update in the database
+            manager.updateProduct(currentEditingProduct);
 
             // Clear fields and reset
             clearInputFields();

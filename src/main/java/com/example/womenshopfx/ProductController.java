@@ -542,6 +542,7 @@ public class ProductController implements Initializable {
 
     @FXML
     private void handleEditProduct() {
+
         Product selectedProduct = prodTable.getSelectionModel().getSelectedItem();
 
         if (selectedProduct == null) {
@@ -659,6 +660,10 @@ public class ProductController implements Initializable {
             showError("Please select a product to delete");
             return;
         }
+        if (selectedProduct.getNbItems()>0) {
+            showError("Product cannot be deleted: stock still available");
+            return;
+        }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Product");
         alert.setHeaderText("Are you sure you want to delete this product ?");
@@ -748,6 +753,11 @@ public class ProductController implements Initializable {
             int nbItemsToPurchase = Integer.parseInt(purchaseTextField.getText());
             if (nbItemsToPurchase < 1) {
                 showError("Please select a valid number for purchase");
+                return;
+            }
+            double totalCost = nbItemsToPurchase * selectedProduct.getPurchasePrice();
+            if (totalCost > Product.getCapital()) {
+                showError("Insufficient budget");
                 return;
             }
 

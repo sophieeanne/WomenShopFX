@@ -10,7 +10,7 @@ public abstract class Product implements Discount, Comparable<Product>{
     private int nbItems=0;
 
     private static int counter = 0; //pour l auto incrementation
-    private static double capital=1000.0;
+    private static double capital=30000;
     private static double income = 0;
     private static double cost = 0;
 
@@ -91,6 +91,7 @@ public abstract class Product implements Discount, Comparable<Product>{
             if (nbItems > this.nbItems) throw new IllegalArgumentException("Product Unavailable");
             this.nbItems -= nbItems;
             income += nbItems * this.sellPrice;
+            capital += nbItems * this.sellPrice;
 
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());

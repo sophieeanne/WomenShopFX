@@ -129,4 +129,7 @@ public abstract class Product implements Discount, Comparable<Product>{
     public int compareTo(Product p) {
         return Double.compare(this.sellPrice, p.sellPrice);
     }
+
+
+
 }

@@ -472,6 +472,11 @@ public class ProductController implements Initializable {
             double sellPrice = Double.parseDouble(sellPriceTextField.getText());
             double discountPrice = 0.0;
             int stock = 0;
+            int size = -1;
+
+            if (category.equalsIgnoreCase("Clothes") || category.equalsIgnoreCase("Shoes")) {
+                size = Integer.parseInt(sizeTextField.getText());
+            }
 
             // Validate data
             if (name.isEmpty()) {
@@ -479,28 +484,24 @@ public class ProductController implements Initializable {
                 return;
             }
 
-            if (purchasePrice < 0 || sellPrice < 0 || stock < 0) {
-                showError("Prices and stock cannot be negative");
+            if (purchasePrice < 0 || sellPrice < 0 ) {
+                showError("Prices cannot be negative");
+                return;
+            }
+            if (purchasePrice > sellPrice) {
+                showError("Purchase price cannot be greater than sale price");
                 return;
             }
 
-            if(stock!=0){
-                showError("Stock should be equal to 0");
-                return;
-            }
-            if(discountPrice!=0){
-                showError("Discount prices should be equal to 0");
-                return;
-            }
 
             // Create product based on category
             Product newProduct;
             switch (category.toLowerCase()) {
                 case "clothes":
-                    newProduct = new Clothes(name, purchasePrice, sellPrice, 38); // Default size
+                    newProduct = new Clothes(name, purchasePrice, sellPrice, size); // Default size
                     break;
                 case "shoes":
-                    newProduct = new Shoes(name, purchasePrice, sellPrice, 40); // Default shoe size
+                    newProduct = new Shoes(name, purchasePrice, sellPrice, size); // Default shoe size
                     break;
                 case "accessories":
                     newProduct = new Accessories(name, purchasePrice, sellPrice);
@@ -578,18 +579,51 @@ public class ProductController implements Initializable {
         }
 
         try {
+            //Retrieve values
+            String newName = nameTextField.getText();
+            double newPurchase = Double.parseDouble(purPriceTextField.getText());
+            double newSell = Double.parseDouble(sellPriceTextField.getText());
+            int newSize = -1; // utilisé si clothes/shoes
+
+            if (currentEditingProduct instanceof Clothes || currentEditingProduct instanceof Shoes) {
+                newSize = Integer.parseInt(sizeTextField.getText());
+            }
+            //Validate values
+            if (newName.isEmpty()) {
+                showError("Name cannot be empty");
+                return;
+            }
+
+            if (newPurchase < 0 || newSell < 0 ) {
+                showError("Prices cannot be negative");
+                return;
+            }
+            if (newPurchase > newSell) {
+                showError("Purchase price cannot be greater than sale price");
+                return;
+            }
+            if (currentEditingProduct instanceof Clothes && (newSize < 34 || newSize > 54)) {
+                showError("Size must be between 34 and 54");
+                return;
+            }
+
+            if (currentEditingProduct instanceof Shoes && (newSize < 36 || newSize > 50)) {
+                showError("Shoe size must be between 36 and 50");
+                return;
+            }
+
             // Update the product
             currentEditingProduct.setName(nameTextField.getText());
             currentEditingProduct.setPurchasePrice(Double.parseDouble(purPriceTextField.getText()));
             currentEditingProduct.setSellPrice(Double.parseDouble(sellPriceTextField.getText()));
-            //Update specfic attribute size
+            //Update specific attribute size
             if (currentEditingProduct instanceof Clothes) {
                 Clothes c = (Clothes) currentEditingProduct;
-                c.setSize(Integer.parseInt(sizeTextField.getText()));
+                c.setSize(newSize);
             }
             else if (currentEditingProduct instanceof Shoes) {
                 Shoes s = (Shoes) currentEditingProduct;
-                s.setShoeSize(Integer.parseInt(sizeTextField.getText()));
+                s.setShoeSize(newSize);
             }
             else if (currentEditingProduct instanceof Accessories) {
                 // nothing
@@ -611,7 +645,7 @@ public class ProductController implements Initializable {
             displayStatistics();
 
         } catch (NumberFormatException e) {
-            showError("Please enter valid numbers for prices and stock");
+            showError("Please enter valid numbers ");
         } catch (Exception e) {
             showError("Error: " + e.getMessage());
         }

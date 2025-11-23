@@ -32,7 +32,7 @@ public class Shoes extends Product {
 
     public void setShoeSize(int shoeSize) {
         if (shoeSize < 36 || shoeSize > 50) {
-            throw new IllegalArgumentException("Wrong shoe size!");
+            throw new IllegalArgumentException("Wrong shoe size ! The size is set to the default value of 36.");
         }
         this.shoeSize = shoeSize;
     }
@@ -50,4 +50,7 @@ public class Shoes extends Product {
     public void unApplyDiscount() {
         setDiscountPrice(0);
     }
+
+
+
 }

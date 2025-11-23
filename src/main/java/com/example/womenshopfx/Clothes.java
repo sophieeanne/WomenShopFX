@@ -29,7 +29,7 @@ public class Clothes extends Product {
 
     public void setSize(int s) {
         if (s < 34 || s > 54) {
-            throw new IllegalArgumentException("Wrong clothe size!");
+            throw new IllegalArgumentException("Wrong clothe size ! The size is set to the default value of 34.");
         }
         this.size = s;
     }
@@ -48,5 +48,8 @@ public class Clothes extends Product {
     public void unApplyDiscount() {
         setDiscountPrice(0);
     }
+
+
+
 }
 

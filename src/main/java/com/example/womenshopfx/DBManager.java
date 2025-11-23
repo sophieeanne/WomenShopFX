@@ -107,7 +107,7 @@ public class DBManager {
     public Connection Connector(){
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/womenshop? serverTimezone=Europe%2FParis", "root","root");
-            System.out.println("Connexion OK !");
+            //System.out.println("Connexion OK !");
             return connection;
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,7 +191,7 @@ public class DBManager {
                 }
             }
 
-            System.out.println("SUCCESS: Product added to database.");
+            //System.out.println("SUCCESS: Product added to database.");
 
         } catch (Exception e) {
             System.err.println("ERROR (addProduct): " + e.getMessage());
@@ -218,7 +218,7 @@ public class DBManager {
             if (affectedRows == 0) {
                 System.err.println("No product deleted, ID not found in the database : " + productId);
             } else {
-                System.out.println("Product deleted successfully in the database : " + productId);
+                //System.out.println("Product deleted successfully in the database : " + productId);
             }
 
         } catch (Exception e) {
@@ -266,7 +266,7 @@ public class DBManager {
                 }
             }
 
-            System.out.println("Product updated in database successfully!");
+            //System.out.println("Product updated in database successfully!");
 
         } catch (Exception e) {
             System.err.println("ERROR (updateProduct): " + e.getMessage());
@@ -290,7 +290,7 @@ public class DBManager {
             myStmt.executeUpdate();
             myStmt.close();
 
-            System.out.println("Discount updated in database successfully!");
+            //System.out.println("Discount updated in database successfully!");
 
         } catch (Exception e) {
             System.err.println("ERROR (updateDiscount): " + e.getMessage());
@@ -314,7 +314,7 @@ public class DBManager {
             myStmt.executeUpdate();
             myStmt.close();
 
-            System.out.println("Stock updated in database successfully!");
+            //System.out.println("Stock updated in database successfully!");
 
         } catch (Exception e) {
             System.err.println("ERROR (updateStock): " + e.getMessage());

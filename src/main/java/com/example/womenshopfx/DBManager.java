@@ -300,6 +300,30 @@ public class DBManager {
         }
     }
 
+    public void updateStock(Product p) {
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        try {
+            myConn = this.Connector();
+
+            // Update main Product table
+            String sql = "UPDATE Product SET nbItems=? WHERE number=?";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setDouble(1, p.getNbItems());
+            myStmt.setInt(2, p.getNumber());
+            myStmt.executeUpdate();
+            myStmt.close();
+
+            System.out.println("Stock updated in database successfully!");
+
+        } catch (Exception e) {
+            System.err.println("ERROR (updateStock): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            close(myConn, myStmt, null);
+        }
+    }
+
 
 
 

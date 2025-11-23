@@ -663,13 +663,17 @@ public class ProductController implements Initializable {
                 return;
             }
 
-            // Calcul new income
+
+            // 2 cases
             if (selectedProduct.getDiscountPrice()==0) {
                 selectedProduct.sell(nbItemsToSell);
             }
             else {
                 selectedProduct.sellWithDiscount(nbItemsToSell);
             }
+
+            //Update stock in DB
+            manager.updateStock(selectedProduct);
 
 
             // Refresh the table
@@ -707,6 +711,9 @@ public class ProductController implements Initializable {
             // Calcul new cost and capital
             selectedProduct.purchase(nbItemsToPurchase);
 
+            //Update stock in DB
+            manager.updateStock(selectedProduct);
+
             // Refresh the table
             prodTable.refresh();
 
@@ -722,7 +729,7 @@ public class ProductController implements Initializable {
         }
     }
 
-//Le update va marcher ? pas sure
+
     private void handleApplyDiscount() {
         boolean anyApplied = false;
 
@@ -751,7 +758,7 @@ public class ProductController implements Initializable {
 
         for (Product p : allProducts) {
 
-            if (p.getDiscountPrice() != 0) {  // discount actif
+            if (p.getDiscountPrice() != 0) {
                 p.unApplyDiscount();
                 manager.updateDiscount(p); // update DB
                 anyStopped = true;

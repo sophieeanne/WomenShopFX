@@ -465,6 +465,8 @@ public class ProductController implements Initializable {
             discPriceTextField.setText("0.0");
             stockTextField.setText("0");
 
+            catTextField.setEditable(true);
+
             // Get values from TextFields
             String name = nameTextField.getText();
             String category = catTextField.getText();
@@ -474,7 +476,16 @@ public class ProductController implements Initializable {
             int stock = 0;
             int size = -1;
 
-            if (category.equalsIgnoreCase("Clothes") || category.equalsIgnoreCase("Shoes")) {
+            if (category.equalsIgnoreCase("Clothes")) {
+                if(size<34 || size>54){
+                    showError("The size must be between 34 and 54");
+                }
+                size = Integer.parseInt(sizeTextField.getText());
+            }
+            if(category.equalsIgnoreCase("Shoes")){
+                if(size<36 || size>50){
+                    showError("The size must be between 36 and 50");
+                }
                 size = Integer.parseInt(sizeTextField.getText());
             }
 
@@ -553,7 +564,7 @@ public class ProductController implements Initializable {
         try {
             // Fill fields with selected product data
             nameTextField.setText(selectedProduct.getName());
-            catTextField.setText(getCategoryName(selectedProduct));
+            catTextField.setEditable(false);
             purPriceTextField.setText(String.valueOf(selectedProduct.getPurchasePrice()));
             sellPriceTextField.setText(String.valueOf(selectedProduct.getSellPrice()));
             discPriceTextField.setText(String.valueOf(selectedProduct.getDiscountPrice()));
@@ -868,9 +879,9 @@ public class ProductController implements Initializable {
         double income = Product.getIncome();
         double cost = Product.getCost();
 
-        capitalTextField.setText(String.format(" €%.2f", capital));
-        incomeTextField.setText(String.format(" €%.2f", income));
-        costTextField.setText(String.format(" €%.2f", cost));
+        capitalTextField.setText(String.format("%.2f €", capital));
+        incomeTextField.setText(String.format("%.2f €", income));
+        costTextField.setText(String.format("%.2f €", cost));
     }
 
 
